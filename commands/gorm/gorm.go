@@ -12,7 +12,6 @@ import (
 
 	"github.com/carltd/gtool/commands"
 	"github.com/carltd/gtool/utils"
-	"github.com/go-xorm/core"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
@@ -314,6 +313,8 @@ func value2Bytes(rawValue *reflect.Value) ([]byte, error) {
 }
 
 func value2String(rawValue *reflect.Value) (str string, err error) {
+	var c_TIME_DEFAULT       time.Time
+
 	aa := reflect.TypeOf((*rawValue).Interface())
 	vv := reflect.ValueOf((*rawValue).Interface())
 	switch aa.Kind() {
@@ -338,8 +339,8 @@ func value2String(rawValue *reflect.Value) (str string, err error) {
 		}
 		// time type
 	case reflect.Struct:
-		if aa.ConvertibleTo(core.TimeType) {
-			str = vv.Convert(core.TimeType).Interface().(time.Time).Format(time.RFC3339Nano)
+		if aa.ConvertibleTo(reflect.TypeOf(c_TIME_DEFAULT)) {
+			str = vv.Convert(reflect.TypeOf(c_TIME_DEFAULT)).Interface().(time.Time).Format(time.RFC3339Nano)
 		} else {
 			err = fmt.Errorf("Unsupported struct type %v", vv.Type().Name())
 		}
